@@ -6,7 +6,7 @@ using System.Text;
 
 namespace CoinMoin.Config
 {
-    class BotConfiguration : IConfig<BotConfiguration>
+    public partial class BotConfiguration : IConfig<BotConfiguration>
     {
         public string Token { get; set; }
         public string Prefix { get; set; }
