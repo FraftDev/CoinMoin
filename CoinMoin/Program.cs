@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Threading;
 using System.Threading.Tasks;
 using CoinMoin.Commands;
 using CoinMoin.Config;
@@ -64,12 +65,29 @@ namespace CoinMoin
 
             await this.Client.ConnectAsync();
 
-            DatabaseConfig dbConfig = DatabaseConfig.LoadFromFile();
-            Database database = new Database(dbConfig);
-            Updater updater = new Updater(database);
-            updater.UpdateDatabase();
+            UpdateDatabase();
 
             await Task.Delay(-1);
+        }
+
+        private void UpdateDatabase()
+        {
+            new Thread(delegate ()
+            {
+                DatabaseConfig dbConfig = DatabaseConfig.LoadFromFile();
+                Database database = new Database(dbConfig);
+                Updater updater = new Updater(database);
+
+                while (true)
+                {
+                    Thread.Sleep(10000);
+
+                    updater.UpdateDatabase();
+                }
+            })
+            {
+                IsBackground = true
+            }.Start();
         }
 
         private async Task Commands_CommandErrored(CommandsNextExtension sender, CommandErrorEventArgs e)
