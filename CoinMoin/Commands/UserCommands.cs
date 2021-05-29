@@ -24,6 +24,21 @@ namespace CoinMoin.Commands
             await ctx.RespondAsync($"{emoji} Pong! Ping: {ctx.Client.Ping}ms");
         }
 
+        [Command("info")]
+        public async Task GetHelp(CommandContext ctx)
+        {
+            await ctx.TriggerTypingAsync();
+
+            DiscordEmbedBuilder embedBuilder = new DiscordEmbedBuilder()
+                .WithColor(DiscordColor.Green)
+                .WithTitle("CoinMoin Info")
+                .AddField("Supported Coins", "btc,eth,bnb,ada,doge,xrp,dot,icp,bch,uni,ltc,link,matic,xlm,sol")
+                .AddField("Get Price Info", "-cm price [symbol] ([currency usd/eur])")
+                .WithFooter("Made with ❤ by FraftDev");
+
+            await ctx.Channel.SendMessageAsync(embedBuilder.Build());
+        }
+
         [Command("price")]
         [Description("Get USD price for cryptocurrency")]
         public async Task GetPrice(CommandContext ctx, string symbol, string currency = "usd")
@@ -34,7 +49,7 @@ namespace CoinMoin.Commands
 
             if(coin.Id == null)
             {
-                Discord​Embed​Builder embedBuilder = new DiscordEmbedBuilder()
+                Discord​Embed​Builder embedFailBuilder = new DiscordEmbedBuilder()
                 .WithColor(DiscordColor.Red)
                 .WithTitle("CoinMoin Crypto Prices")
                 .WithThumbnail("https://uxwing.com/wp-content/themes/uxwing/download/01-user_interface/cancel.png")
@@ -42,55 +57,31 @@ namespace CoinMoin.Commands
                 .AddField("List All Coins", "-cm list")
                 .WithFooter("Made with ❤ by FraftDev");
 
-                await ctx.Channel.SendMessageAsync(embedBuilder.Build());
+                await ctx.Channel.SendMessageAsync(embedFailBuilder.Build());
                 return;
             }
 
-            if(currency == "usd")
-            {
-                DiscordColor discordColor;
-                if (coin.Change24H > 0)
-                    discordColor = DiscordColor.Green;
-                else
-                    discordColor = DiscordColor.Red;
+            bool isUsd = currency == "usd";
 
-                Discord​Embed​Builder embedBuilder = new DiscordEmbedBuilder()
-                .WithColor(discordColor)
-                .WithTitle("CoinMoin Crypto Prices")
-                .WithThumbnail(coin.GetThumbnail())
-                .AddField("Name", coin.Name)
-                .AddField("Price", String.Format("${0:n}", coin.PriceUSD))
-                .AddField("Market Cap", String.Format("${0:n}", coin.MarketCapUSD))
-                .AddField("Volume 24H", String.Format("${0:n}", coin.Volume24HUSD))
-                .AddField("Change 24H", String.Format("{0:n}%", coin.Change24H))
-                .AddField("Updated At", coin.UpdatedAt.ToLongTimeString())
-                .WithFooter("Made with ❤ by FraftDev");
+            DiscordColor discordColor;
+            if (coin.Change24H > 0)
+                discordColor = DiscordColor.Green;
+            else
+                discordColor = DiscordColor.Red;
 
-                await ctx.Channel.SendMessageAsync(embedBuilder.Build());
-            }
+            Discord​Embed​Builder embedBuilder = new DiscordEmbedBuilder()
+            .WithColor(discordColor)
+            .WithTitle("CoinMoin Crypto Prices")
+            .WithThumbnail(coin.GetThumbnail())
+            .AddField("Name", coin.Name)
+            .AddField("Price", String.Format(isUsd ? "${0:n}" : "{0:n}€", isUsd ? coin.PriceUSD : coin.PriceEUR))
+            .AddField("Market Cap", String.Format(isUsd ? "${0:n}" : "{0:n}€", isUsd ? coin.MarketCapUSD : coin.MarketCapEUR))
+            .AddField("Volume 24H", String.Format(isUsd ? "${0:n}" : "{0:n}€", isUsd ? coin.Volume24HUSD : coin.MarketCapEUR))
+            .AddField("Change 24H", String.Format("{0:n}%", coin.Change24H))
+            .AddField("Updated At", coin.UpdatedAt.ToLongTimeString())
+            .WithFooter("Made with ❤ by FraftDev");
 
-            if(currency == "eur")
-            {
-                DiscordColor discordColor;
-                if (coin.Change24H > 0)
-                    discordColor = DiscordColor.Green;
-                else
-                    discordColor = DiscordColor.Red;
-
-                Discord​Embed​Builder embedBuilder = new DiscordEmbedBuilder()
-                .WithColor(discordColor)
-                .WithTitle("CoinMoin Crypto Prices")
-                .WithThumbnail(coin.GetThumbnail())
-                .AddField("Name", coin.Name)
-                .AddField("Price", String.Format("{0:n}€", coin.PriceEUR))
-                .AddField("Market Cap", String.Format("{0:n}€", coin.MarketCapEUR))
-                .AddField("Volume 24H", String.Format("{0:n}€", coin.Volume24HEUR))
-                .AddField("Change 24H", String.Format("{0:n}%", coin.Change24H))
-                .AddField("Updated At", coin.UpdatedAt.ToLongTimeString())
-                .WithFooter("Made with ❤ by FraftDev");
-
-                await ctx.Channel.SendMessageAsync(embedBuilder.Build());
-            }
+            await ctx.Channel.SendMessageAsync(embedBuilder.Build());
         }
     }
 }

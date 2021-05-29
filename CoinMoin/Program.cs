@@ -63,8 +63,6 @@ namespace CoinMoin
 
             this.Commands.RegisterCommands<UserCommands>();
 
-            this.Commands.SetHelpFormatter<SimpleHelpFormatter>();
-
             await this.Client.ConnectAsync();
 
             UpdateDatabase();
