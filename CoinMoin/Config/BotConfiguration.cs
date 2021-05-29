@@ -6,7 +6,7 @@ using System.Text;
 
 namespace CoinMoin.Config
 {
-    class BotConfiguration
+    class BotConfiguration : IConfig<BotConfiguration>
     {
         public string Token { get; set; }
         public string Prefix { get; set; }
@@ -25,5 +25,7 @@ namespace CoinMoin.Config
 
             return JsonConvert.DeserializeObject<BotConfiguration>(jsonConfig);
         }
+
+        IConfig<BotConfiguration> IConfig<BotConfiguration>.LoadFromFile() => LoadFromFile();
     }
 }

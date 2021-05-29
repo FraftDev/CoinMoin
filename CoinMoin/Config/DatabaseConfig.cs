@@ -6,7 +6,7 @@ using System.Text;
 
 namespace CoinMoin.Config
 {
-    class DatabaseConfig
+    public partial class DatabaseConfig : IConfig<DatabaseConfig>
     {
         [JsonProperty("DB_HOST")]
         public string Host { get; set; }
@@ -31,5 +31,7 @@ namespace CoinMoin.Config
 
             return JsonConvert.DeserializeObject<DatabaseConfig>(jsonConfig);
         }
+
+        IConfig<DatabaseConfig> IConfig<DatabaseConfig>.LoadFromFile() => LoadFromFile();
     }
 }
