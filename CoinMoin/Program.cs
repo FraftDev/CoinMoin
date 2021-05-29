@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Globalization;
 using System.Threading.Tasks;
 using CoinMoin.Commands;
 using CoinMoin.Config;
+using CoinMoin.Models;
 using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Exceptions;
@@ -21,13 +23,14 @@ namespace CoinMoin
 
         static void Main(string[] args)
         {
+            CultureInfo.DefaultThreadCurrentCulture = CultureInfo.GetCultureInfo("en");
             var program = new Program();
             program.RunBotAsync().GetAwaiter().GetResult();
         }
 
         public async Task RunBotAsync()
         {
-            Configuration config = Configuration.LoadFromFile();
+            BotConfiguration config = BotConfiguration.LoadFromFile();
 
             var discordConfig = new DiscordConfiguration
             {
@@ -60,6 +63,11 @@ namespace CoinMoin
             this.Commands.SetHelpFormatter<SimpleHelpFormatter>();
 
             await this.Client.ConnectAsync();
+
+            DatabaseConfig dbConfig = DatabaseConfig.LoadFromFile();
+            Database database = new Database(dbConfig);
+            Updater updater = new Updater(database);
+            updater.UpdateDatabase();
 
             await Task.Delay(-1);
         }

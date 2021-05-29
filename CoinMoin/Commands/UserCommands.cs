@@ -21,5 +21,14 @@ namespace CoinMoin.Commands
 
             await ctx.RespondAsync($"{emoji} Pong! Ping: {ctx.Client.Ping}ms");
         }
+
+        [Command("price")]
+        [Description("Get USD price for cryptocurrency")]
+        public async Task GetPrice(CommandContext ctx)
+        {
+            await ctx.TriggerTypingAsync();
+
+
+        }
     }
 }
