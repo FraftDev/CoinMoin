@@ -16,11 +16,16 @@ namespace CoinMoin.Models
         public DatabaseConfig Config { get; set; }
         public Logger Logger { get; set; }
 
-        public Database(DatabaseConfig _config)
+        public Database(DatabaseConfig _config, int _instance)
         {
             Config = _config;
             Connection = new MySqlConnection($"Server={Config.Host};Database={Config.Name};Uid={Config.User};");
-            Logger = new Logger("DatabaseLogger", 1, Environment.CurrentDirectory + "\\Log\\DatabaseLog.txt");
+            Logger = new Logger("DatabaseLogger", _instance, Environment.CurrentDirectory + "\\Log\\DatabaseLog.txt");
+        }
+
+        public void Dispose()
+        {
+            this.Dispose();
         }
 
         public DataTable GetData(string query)

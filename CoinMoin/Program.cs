@@ -21,6 +21,8 @@ namespace CoinMoin
 
         public DiscordClient Client { get; set; }
         public CommandsNextExtension Commands { get; set; }
+        public static Database globalDatabase { get; set; }
+        public static DatabaseConfig globalDatabaseConfig { get; set; }
 
         static void Main(string[] args)
         {
@@ -74,9 +76,9 @@ namespace CoinMoin
         {
             new Thread(delegate ()
             {
-                DatabaseConfig dbConfig = DatabaseConfig.LoadFromFile();
-                Database database = new Database(dbConfig);
-                Updater updater = new Updater(database);
+                globalDatabaseConfig = DatabaseConfig.LoadFromFile();
+                globalDatabase = new Database(globalDatabaseConfig, 1);
+                Updater updater = new Updater(globalDatabase);
 
                 while (true)
                 {
