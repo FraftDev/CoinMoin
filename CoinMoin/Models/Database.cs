@@ -19,7 +19,7 @@ namespace CoinMoin.Models
         public Database(DatabaseConfig _config, int _instance)
         {
             Config = _config;
-            Connection = new MySqlConnection($"Server={Config.Host};Database={Config.Name};Uid={Config.User};");
+            Connection = new MySqlConnection($"Server={Config.Host};Database={Config.Name};Uid={Config.User};Pwd={Config.Pass};");
             Logger = new Logger("DatabaseLogger", _instance, Environment.CurrentDirectory + "\\Log\\DatabaseLog.txt");
         }
 

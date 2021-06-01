@@ -16,6 +16,8 @@ namespace CoinMoin.Config
         
         [JsonProperty("DB_USER")]
         public string User { get; set; }
+        [JsonProperty("DB_PASS")]
+        public string Pass { get; set; }
 
         public static DatabaseConfig GetInstance()
         {
